@@ -1,0 +1,11 @@
+{
+  "name": "3K Coach",
+  "short_name": "3K Coach",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "lang": "he",
+  "dir": "rtl",
+  "icons": []
+}
