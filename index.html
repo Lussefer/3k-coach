@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="he" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b1020">
-<title>3K Coach V3.4</title><link rel="manifest" href="manifest.webmanifest">
+<title>3K Coach V3.5</title><link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
 
@@ -52,7 +52,8 @@ body.workout-mode #live .card {
   body.workout-mode #live hr{display:none}
 }
 
-</style></head><body>
+</style><script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head><body>
 <header><h1>3K Coach</h1><small>יעד: 3 ק״מ בפחות מ־16:00</small></header>
 <nav><button data-tab="home" class="primary">היום</button><button data-tab="plan">תוכנית</button><button data-tab="progress">התקדמות</button><button data-tab="history">היסטוריה</button><button data-tab="data">נתונים</button></nav>
 <main>
@@ -62,22 +63,39 @@ body.workout-mode #live .card {
 <div class="slider-head"><label>כבדות רגליים</label><span class="slider-val" id="vLegs">3</span></div><input type="range" min="0" max="10" value="3" id="readyLegs">
 <div class="slider-head"><label>אנרגיה</label><span class="slider-val" id="vEnergy">7</span></div><input type="range" min="0" max="10" value="7" id="readyEnergy">
 <div class="slider-head"><label>כאב</label><span class="slider-val" id="vPain">0</span></div><input type="range" min="0" max="10" value="0" id="readyPain">
-<div class="slider-head"><label>שעות שינה</label><span class="slider-val" id="vSleep">7</span></div><input type="range" min="3" max="12" step=".5" value="7" id="readySleep"><button onclick="saveReadiness()" style="margin-top:10px">שמור מוכנות</button><button class="ghost" onclick="testTransitionSound()" style="margin-top:10px">🔊 בדוק צליל מעבר</button><div id="readinessAdvice" class="small" style="margin-top:8px"></div></div></section>
+<div class="slider-head"><label>שעות שינה</label><span class="slider-val" id="vSleep">7</span></div><input type="range" min="3" max="12" step=".5" value="7" id="readySleep"><button onclick="saveReadiness()" style="margin-top:10px">שמור מוכנות</button><div id="readinessAdvice" class="small" style="margin-top:8px"></div></div></section>
 <section id="plan" class="tab"><div class="card"><h2>תוכנית האימונים</h2><div id="planList"></div></div><div class="card"><h2>עדכון תוכנית מהמאמן</h2><p class="muted">מדביקים כאן קוד תוכנית שאני מחזיר לך לאחר ניתוח שבועי.</p><textarea id="planImport" class="codebox" placeholder="קוד עדכון"></textarea><div class="row"><button class="primary" onclick="importCoachPlan()">ייבא תוכנית</button><button onclick="exportPlanCode()">ייצא קוד נוכחי</button></div></div></section>
 <section id="progress" class="tab"><div class="card"><h2>ביצועי 3 ק״מ</h2><p class="muted">למעלה = זמן גבוה יותר, למטה = זמן מהיר יותר. קו היעד הירוק הוא 15:59.</p><canvas id="progressChart" width="820" height="300"></canvas><div id="forecastBox" class="notice" style="margin-top:12px"></div></div><div class="card"><h3>שיאים לפי מהירות</h3><div id="speedPRs"></div></div></section>
 <section id="manual" class="tab"><div class="card"><div class="row" style="margin-bottom:10px"><button class="ghost" onclick="showTab('home')">← חזרה</button><div></div></div><h2>הוסף אימון בדיעבד</h2><form id="manualForm"><div class="grid"><div><label>תאריך</label><input type="date" id="mDate" required></div><div><label>סוג</label><select id="mType"><option value="3k_test">3 ק״מ / מבחן</option><option value="steady">ריצה רצופה</option><option value="intervals">אינטרוולים</option><option value="easy">קל / Run-Walk</option><option value="other">אחר</option></select></div><div><label>מרחק בק״מ</label><input type="number" step=".01" id="mDistance"></div><div><label>זמן</label><input id="mTime" placeholder="21:15"></div><div><label>RPE</label><input type="range" min="1" max="10" step=".5" value="5" id="mRpe"><div class="small muted">ערך: <span id="mRpeVal">5</span></div></div><div><label>דופק ממוצע</label><input type="number" id="mAvgHr"></div><div><label>דופק מקסימלי</label><input type="number" id="mMaxHr"></div><div><label>משקל</label><input type="number" step=".1" id="mWeight"></div></div><label>מה הגביל בעיקר?</label><select id="mLimiter"><option value="">לא ידוע</option><option>נשימה</option><option>רגליים</option><option>תשישות כללית</option><option>כאב</option><option>לא הרגשתי מוגבל</option></select><label>הערות</label><textarea id="mNotes"></textarea><label>צילום מסך / גרף</label><input type="file" accept="image/*" id="mImage"><button class="primary" type="submit" style="margin-top:12px">שמור אימון</button></form></div></section><section id="history" class="tab"><div class="card"><h2>היסטוריית אימונים</h2><div id="historyList"></div></div></section>
-<section id="data" class="tab"><div class="card"><h2>דיווח למאמן</h2>
+<section id="data" class="tab">
+<div class="card">
+  <h2>שמע בזמן אימון</h2>
+  <p class="muted">בחר איך האפליקציה תתריע על מעבר בין מקטעים. ברירת המחדל היא כבוי כדי לא להפריע למוזיקה.</p>
+  <label>מצב שמע</label>
+  <select id="audioMode" onchange="saveAudioMode()">
+    <option value="off">כבוי</option>
+    <option value="beep">ביפ</option>
+    <option value="speech">הכרזה קולית</option>
+    <option value="both">ביפ + הכרזה</option>
+  </select>
+  <div class="row" style="margin-top:10px">
+    <button onclick="testBeep()">🔔 בדוק ביפ</button>
+    <button onclick="testSpeech()">🗣️ בדוק הכרזה</button>
+  </div>
+  <div class="small muted" style="margin-top:8px">מומלץ להפעיל מוזיקה בזמן הבדיקה. אם אחת השיטות עוצרת אותה, אל תבחר בה לאימון.</div>
+</div>
+<div class="card"><h2>דיווח למאמן</h2>
 <p class="muted">יוצר תמונת דיווח אחת הכוללת את סיכום השבוע ואת גרפי הדופק ששמרת באימונים.</p>
 <div class="row">
-  <button class="primary" onclick="downloadCoachReportImage()">🖼 צור תמונת דיווח</button>
-  <button onclick="shareCoachReportImage()">📤 שתף תמונת דיווח</button>
+  <button class="primary" onclick="downloadCoachZip()">📦 דוח מלא למאמן</button><button onclick="downloadCoachReportImage()">🖼 תמונת דיווח</button>
+  <button onclick="shareCoachZip()">📤 שתף דוח מלא</button><button onclick="shareCoachReportImage()">שתף תמונה</button>
 </div>
 <div class="row" style="margin-top:8px">
   <button onclick="generateCoachReport()">צור טקסט בלבד</button>
   <button onclick="copyCoachReport()">העתק טקסט</button>
 </div>
 <textarea id="coachReport" style="margin-top:10px;min-height:220px"></textarea>
-<div class="small muted" style="margin-top:8px">הדרך המומלצת לצ׳אט: צור/שתף את תמונת הדיווח והעלה אותה כאן.</div>
+<div class="small muted" style="margin-top:8px">הדרך המומלצת לצ׳אט: “דוח מלא למאמן” יוצר ZIP עם report.txt וכל גרפי הדופק באיכות המקורית.</div>
 </div><div class="card"><h2>גיבוי וייצוא</h2><div class="row"><button onclick="exportBackup()">💾 גיבוי</button><button onclick="importFile.click()">📥 שחזור / מיזוג</button><input type="file" id="importFile" accept=".json" hidden></div><div class="row" style="margin-top:10px"><button onclick="exportCSV()">📊 CSV</button><button class="danger" onclick="resetApp()">איפוס</button></div></div></section>
 <section id="live" class="tab"><div class="card live"><div class="muted" id="liveWorkoutName"></div><div class="small muted">זמן אימון</div><div class="big" id="liveTimer">00:00</div><hr style="border-color:#263650;border-width:1px 0 0"><h2 id="liveSegmentTitle"></h2><div class="speed" id="liveSpeed"></div><div class="small muted">נותר במקטע</div><div class="countdown" id="segmentCountdown">--:--</div><div class="muted" id="liveSegmentMeta"></div><div class="live-actions"><button class="warn" onclick="toggleDeviationPanel()">⚠️ חריגה</button><button onclick="nextSegment()">⏭ מקטע הבא</button><button onclick="togglePause()" id="pauseBtn">⏸ השהה</button><button class="danger" onclick="openFinishPanel()">■ סיים</button></div>
 <div id="deviationPanel" class="quick-panel" hidden><b>מה קרה?</b><div class="quick-grid" style="margin-top:9px"><button onclick="quickDeviation('קשה מדי')">😮‍💨 קשה מדי</button><button onclick="quickDeviation('כאב')">🩹 כאב</button><button onclick="quickDeviation('הורדתי מהירות')">⬇️ הורדתי מהירות</button><button onclick="quickDeviation('הארכתי מנוחה')">⏱ הארכתי מנוחה</button><button onclick="quickDeviation('דילגתי על מקטע')">⏭ דילגתי</button><button onclick="quickDeviation('עצרתי מוקדם')">🛑 עצרתי מוקדם</button></div></div>
@@ -154,24 +172,59 @@ function saveReadiness(){const r={date:new Date().toISOString(),legs:+readyLegs.
 
 const transitionAudio=new Audio('./beep.wav');
 transitionAudio.preload='auto';
-transitionAudio.volume=0.55;
-function playTransitionSound(){
+transitionAudio.volume=0.45;
+
+function getAudioMode(){ return localStorage.getItem('3kCoachAudioMode') || 'off'; }
+function saveAudioMode(){
+ localStorage.setItem('3kCoachAudioMode', document.getElementById('audioMode')?.value || 'off');
+}
+function initAudioSettings(){
+ const el=document.getElementById('audioMode');
+ if(el) el.value=getAudioMode();
+}
+function playBeep(){
  try{
-   transitionAudio.pause();
-   transitionAudio.currentTime=0;
-   const p=transitionAudio.play();
-   if(p&&p.catch)p.catch(()=>{});
+   transitionAudio.pause();transitionAudio.currentTime=0;
+   const p=transitionAudio.play();if(p&&p.catch)p.catch(()=>{});
  }catch(e){}
 }
-function testTransitionSound(){playTransitionSound()}
+function speakText(text){
+ try{
+   if(!('speechSynthesis' in window))return;
+   speechSynthesis.cancel();
+   const u=new SpeechSynthesisUtterance(text);
+   u.lang='he-IL';u.rate=1.05;u.volume=1;
+   speechSynthesis.speak(u);
+ }catch(e){}
+}
+function announceSpeed(speed,prefix=''){
+ const s=Number(speed);
+ const spoken=Number.isInteger(s)?String(s):String(s).replace('.', ' נקודה ');
+ speakText(`${prefix}${spoken} קילומטר לשעה`);
+}
+function playWorkoutCue(kind,speed){
+ const mode=getAudioMode();
+ if(mode==='off')return;
+ if(mode==='beep'||mode==='both')playBeep();
+ if(mode==='speech'||mode==='both'){
+   setTimeout(()=>{
+     if(kind==='start') announceSpeed(speed,'מתחילים. ');
+     else if(kind==='finish') speakText('סיום אימון');
+     else announceSpeed(speed);
+   },mode==='both'?350:0);
+ }
+}
+function testBeep(){playBeep()}
+function testSpeech(){speakText('בדיקת שמע. שמונה קילומטר לשעה')}
 
-let live=null,tick=null;function startWorkout(id){playTransitionSound();const w=db.plan.find(x=>x.id===id);if(!w)return;live={workoutId:id,start:Date.now(),elapsedStored:0,paused:false,segmentIndex:0,segmentStart:Date.now(),segmentStored:0,deviations:[]};deviationPanel.hidden=true;finishPanel.hidden=true;showTab('live');renderLive(w);clearInterval(tick);tick=setInterval(()=>renderLive(w),250)}
+
+let live=null,tick=null;function startWorkout(id){const w=db.plan.find(x=>x.id===id);if(!w)return;live={workoutId:id,start:Date.now(),elapsedStored:0,paused:false,segmentIndex:0,segmentStart:Date.now(),segmentStored:0,deviations:[]};deviationPanel.hidden=true;finishPanel.hidden=true;showTab('live');renderLive(w);clearInterval(tick);tick=setInterval(()=>renderLive(w),250)}
 function liveElapsed(){return live.elapsedStored+(live.paused?0:(Date.now()-live.start)/1000)}function segmentElapsed(){return live.segmentStored+(live.paused?0:(Date.now()-live.segmentStart)/1000)}function renderLive(w){if(!live)return;const s=w.segments[live.segmentIndex];liveWorkoutName.textContent=w.title;liveTimer.textContent=fmtTime(liveElapsed());if(!s){openFinishPanel();return}const dur=segDuration(s);liveSegmentTitle.textContent=s.label;liveSpeed.textContent=`${s.speed} קמ״ש`;segmentCountdown.textContent=dur?fmtTime(Math.max(0,dur-segmentElapsed())):'—';liveSegmentMeta.textContent=s.distanceKm?`${s.distanceKm} ק״מ · זמן צפוי ${fmtTime(dur)}`:`משך מתוכנן ${fmtTime(dur)}`;deviationLog.innerHTML=live.deviations.map(d=>`⚠️ ${d.at} — ${d.type}`).join('<br>');if(dur&&!live.paused&&segmentElapsed()>=dur)nextSegment()}
 function nextSegment(){
  if(!live)return;
  const w=db.plan.find(x=>x.id===live.workoutId);
  live.segmentIndex++;live.segmentStart=Date.now();live.segmentStored=0;deviationPanel.hidden=true;
- if(w && live.segmentIndex < w.segments.length) playTransitionSound();
+ if(w && live.segmentIndex < w.segments.length) playWorkoutCue('segment',w.segments[live.segmentIndex].speed);
 }function togglePause(){if(!live)return;if(!live.paused){live.elapsedStored=liveElapsed();live.segmentStored=segmentElapsed();live.paused=true;pauseBtn.textContent='▶ המשך'}else{live.paused=false;live.start=Date.now();live.segmentStart=Date.now();pauseBtn.textContent='⏸ השהה'}}
 function toggleDeviationPanel(){deviationPanel.hidden=!deviationPanel.hidden;if(!deviationPanel.hidden&&navigator.vibrate)navigator.vibrate(30)}function quickDeviation(type){if(!live)return;live.deviations.push({at:fmtTime(liveElapsed()),type,segmentIndex:live.segmentIndex});deviationPanel.hidden=true;if(navigator.vibrate)navigator.vibrate(25)}
 function openFinishPanel(){if(!live)return;if(!live.paused)togglePause();finishPanel.hidden=false;deviationPanel.hidden=true}function closeFinishPanel(){finishPanel.hidden=true;if(live&&live.paused)togglePause()}function confirmFinish(){if(!live)return;clearInterval(tick);const w=db.plan.find(x=>x.id===live.workoutId),secs=Math.round(live.elapsedStored);db.workouts.push({id:'live-'+Date.now(),date:new Date().toISOString().slice(0,10),type:'planned',planId:w?.id||null,plannedWorkout:w?.title||'',timeSec:secs,rpe:+finishRpe.value||null,limiter:finishLimiter.value||'',notes:finishNotes.value||'',deviations:clone(live.deviations)});db.liveSessions.push(clone(live));live=null;finishPanel.hidden=true;save();showTab('history')}
@@ -202,6 +255,56 @@ function wrapLines(ctx,text,maxWidth){
  });
  return out;
 }
+
+function dataUrlParts(dataUrl){
+ const m=String(dataUrl||'').match(/^data:([^;]+);base64,(.*)$/);
+ return m?{mime:m[1],base64:m[2]}:null;
+}
+async function buildCoachZipBlob(){
+ if(typeof JSZip==='undefined') throw new Error('ZIP library unavailable');
+ const zip=new JSZip(),recent=weeklyReportWorkouts();
+ const report=generateCoachReport();
+ zip.file('report.txt',report);
+ const meta={
+   format:'3K-Coach-Weekly-Report',version:2,createdAt:new Date().toISOString(),
+   targetDate:db.profile.targetDate,goalTimeSec:db.profile.goalTimeSec,
+   workouts:recent.map(w=>({id:w.id,date:w.date,type:w.type,planId:w.planId||null,plannedWorkout:w.plannedWorkout||null,distanceKm:w.distanceKm||null,timeSec:w.timeSec||null,rpe:w.rpe||null,avgHr:w.avgHr||null,maxHr:w.maxHr||null,limiter:w.limiter||null,notes:w.notes||null,deviations:w.deviations||[]}))
+ };
+ zip.file('data.json',JSON.stringify(meta,null,2));
+ let graphNo=0;
+ recent.forEach(w=>{
+   if(!w.imageData)return;
+   const p=dataUrlParts(w.imageData);if(!p)return;
+   graphNo++;
+   const ext=p.mime.includes('jpeg')?'jpg':p.mime.includes('webp')?'webp':'png';
+   zip.file(`${w.date}-heart-rate-${graphNo}.${ext}`,p.base64,{base64:true});
+ });
+ return await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+}
+async function downloadCoachZip(){
+ try{
+   const blob=await buildCoachZipBlob();
+   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+   a.download=`3K-Coach-Weekly-${new Date().toISOString().slice(0,10)}.zip`;a.click();
+ }catch(e){
+   alert('לא הצלחתי ליצור ZIP. ודא שיש חיבור לאינטרנט ונסה שוב. אפשר עדיין להשתמש בתמונת הדיווח.');
+ }
+}
+async function shareCoachZip(){
+ try{
+   const blob=await buildCoachZipBlob();
+   const file=new File([blob],`3K-Coach-Weekly-${new Date().toISOString().slice(0,10)}.zip`,{type:'application/zip'});
+   if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+     await navigator.share({title:'3K Coach – דוח מלא',files:[file]});
+   }else{
+     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;a.click();
+     alert('שיתוף ZIP ישיר אינו נתמך כאן, לכן הקובץ הורד למכשיר.');
+   }
+ }catch(e){
+   if(e?.name!=='AbortError') alert('השיתוף לא הצליח. נסה “דוח מלא למאמן” כדי להוריד את הקובץ.');
+ }
+}
+
 async function buildCoachReportCanvas(){
  const recent=weeklyReportWorkouts(), W=1400, margin=70, textW=W-margin*2;
  const images=[];
