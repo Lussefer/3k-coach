@@ -17,6 +17,41 @@ canvas{width:100%;height:290px;background:var(--card2);border-radius:14px}.notic
 .live{text-align:center}.big{font-size:44px;font-weight:900;font-variant-numeric:tabular-nums}.countdown{font-size:68px;line-height:1;font-weight:900;font-variant-numeric:tabular-nums;margin:12px 0}.speed{font-size:30px;font-weight:850;color:#dff4ff}.live-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.live-actions button{min-height:58px;font-size:18px}.quick-panel{margin-top:12px;background:#101827;border:1px solid var(--line);border-radius:16px;padding:12px}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quick-grid button{min-height:56px;font-size:16px}
 .finish-panel{margin-top:12px;background:#101827;border:1px solid var(--line);border-radius:16px;padding:13px;text-align:right}.bottom{position:fixed;bottom:0;left:0;right:0;z-index:9;background:rgba(11,16,32,.97);border-top:1px solid var(--line);display:flex;gap:8px;padding:9px}.bottom button{flex:1}.codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;direction:ltr;text-align:left}
 @media(max-width:620px){.grid3{grid-template-columns:1fr 1fr}.countdown{font-size:58px}.quick-grid{grid-template-columns:1fr 1fr}}
+
+/* V3.3 workout focus mode */
+body.workout-mode header,
+body.workout-mode nav,
+body.workout-mode .bottom { display:none !important; }
+body.workout-mode main {
+  max-width:none;
+  padding:env(safe-area-inset-top) 10px env(safe-area-inset-bottom);
+  min-height:100dvh;
+}
+body.workout-mode #live .card {
+  min-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 8px);
+  margin:4px 0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+@media (orientation:landscape) and (max-height:520px){
+  body.workout-mode #live .card{
+    min-height:100dvh;padding:8px 18px;
+    display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:auto auto auto;
+    gap:4px 20px;align-items:center;
+  }
+  body.workout-mode #live .big{font-size:30px}
+  body.workout-mode #live .countdown{font-size:48px;margin:2px 0}
+  body.workout-mode #live h2{margin:2px 0;font-size:20px}
+  body.workout-mode #live .live-speed{font-size:26px}
+  body.workout-mode #live .live-actions{
+    grid-column:2;grid-row:1 / span 3;grid-template-columns:1fr 1fr;
+    align-self:stretch;margin-top:0;
+  }
+  body.workout-mode #live .live-actions button{min-height:52px;font-size:16px}
+  body.workout-mode #live hr{display:none}
+}
+
 </style></head><body>
 <header><h1>3K Coach</h1><small>יעד: 3 ק״מ בפחות מ־16:00</small></header>
 <nav><button data-tab="home" class="primary">היום</button><button data-tab="plan">תוכנית</button><button data-tab="progress">התקדמות</button><button data-tab="history">היסטוריה</button><button data-tab="data">נתונים</button></nav>
@@ -42,7 +77,13 @@ const K='threeKCoach_v1';
 const DEFAULT_PLAN=[];
 const seed={profile:{goalDistanceKm:3,goalTimeSec:959,targetDate:'',currentWeightKg:null},workouts:[],speedPRs:[],plan:DEFAULT_PLAN,readiness:[],liveSessions:[]};
 const clone=x=>JSON.parse(JSON.stringify(x));function load(){try{let d=JSON.parse(localStorage.getItem(K));if(!d)return clone(seed);d.profile||=clone(seed.profile);d.workouts||=[];d.speedPRs||=[];d.plan||=clone(DEFAULT_PLAN);d.readiness||=[];d.liveSessions||=[];return d}catch(e){return clone(seed)}}let db=load();function save(){localStorage.setItem(K,JSON.stringify(db));renderAll()}
-function showTab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('primary',b.dataset.tab===id));if(id==='progress')setTimeout(drawProgress,30)}document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+function showTab(id){
+ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.body.classList.toggle('workout-mode', id==='live');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('primary',b.dataset.tab===id));
+ if(id==='progress')setTimeout(drawProgress,30)
+}document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 const fmtTime=s=>{if(s==null||!isFinite(s))return'—';s=Math.max(0,Math.round(s));return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`};const parseTime=s=>{if(!s)return null;const p=s.trim().split(':').map(Number);if(p.some(x=>!isFinite(x)))return null;return p.length===2?p[0]*60+p[1]:Number(s)};const dateObj=s=>new Date(s+'T12:00:00');const dateHe=s=>dateObj(s).toLocaleDateString('he-IL',{weekday:'short',day:'numeric',month:'numeric'});
 // Only plausible completed 3K efforts belong on the progress chart. This intentionally filters accidental app tests.
 const workout3ks=()=>db.workouts.filter(w=>Math.abs((w.distanceKm||0)-3)<.03&&w.timeSec>=12*60&&w.timeSec<=40*60&&!w.excludeFromProgress).sort((a,b)=>a.date.localeCompare(b.date));const pb=()=>workout3ks().reduce((best,w)=>!best||w.timeSec<best.timeSec?w:best,null);
@@ -63,6 +104,26 @@ const gy=y(goal);ctx.strokeStyle='#86efac';ctx.lineWidth=2;ctx.setLineDash([8,7]
 ctx.strokeStyle='#70cfff';ctx.lineWidth=4;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(x(i),y(p.timeSec)):ctx.moveTo(x(i),y(p.timeSec)));ctx.stroke();pts.forEach((p,i)=>{ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x(i),y(p.timeSec),6,0,Math.PI*2);ctx.fill();ctx.textAlign='center';ctx.fillStyle='#f7f9fc';ctx.fillText(fmtTime(p.timeSec),x(i),y(p.timeSec)-12);ctx.fillStyle='#9aa4b2';ctx.fillText(dateObj(p.date).toLocaleDateString('he-IL',{day:'numeric',month:'numeric'}),x(i),H-18)});const f=forecast(),p=pb();forecastBox.innerHTML=f?`<b>תחזית גסה:</b> סביב ${fmtTime(f.pred)} במועד היעד, טווח אי־ודאות רחב ${fmtTime(f.low)}–${fmtTime(f.high)}.<br><span class="muted">התחזית עדיין לא יציבה ותשתפר עם עוד מבחני 3 ק״מ אמיתיים.</span><br><b>פער מהשיא הנוכחי ליעד:</b> ${fmtTime(p.timeSec-goal)}.`:'נדרשות לפחות שתי תוצאות.'}
 ['readyLegs','readyEnergy','readyPain','readySleep'].forEach(id=>document.getElementById(id).addEventListener('input',e=>document.getElementById('v'+({readyLegs:'Legs',readyEnergy:'Energy',readyPain:'Pain',readySleep:'Sleep'}[id])).textContent=e.target.value));mRpe.addEventListener('input',()=>mRpeVal.textContent=mRpe.value);finishRpe.addEventListener('input',()=>finishRpeVal.textContent=finishRpe.value);
 function saveReadiness(){const r={date:new Date().toISOString(),legs:+readyLegs.value,energy:+readyEnergy.value,pain:+readyPain.value,sleep:+readySleep.value};db.readiness.push(r);save();readinessAdvice.innerHTML=r.pain>=5?'<span class="danger-text">כאב משמעותי — לא להתייחס אליו כעייפות רגילה.</span>':r.legs>=7||r.energy<=3?'<span class="warn-text">מוכנות נמוכה — שווה לשקול הורדת עומס.</span>':'<span class="good-text">נשמר.</span>'}
+
+let audioCtx=null;
+function ensureAudio(){
+ try{
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+ }catch(e){}
+}
+function transitionBeep(){
+ try{
+  ensureAudio(); if(!audioCtx)return;
+  const now=audioCtx.currentTime, gain=audioCtx.createGain(), osc=audioCtx.createOscillator();
+  gain.gain.setValueAtTime(0.0001,now);
+  gain.gain.exponentialRampToValueAtTime(0.13,now+0.015);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now+0.28);
+  osc.type='sine';osc.frequency.setValueAtTime(880,now);
+  osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now);osc.stop(now+0.3);
+ }catch(e){}
+}
+
 let live=null,tick=null;function startWorkout(id){const w=db.plan.find(x=>x.id===id);if(!w)return;live={workoutId:id,start:Date.now(),elapsedStored:0,paused:false,segmentIndex:0,segmentStart:Date.now(),segmentStored:0,deviations:[]};deviationPanel.hidden=true;finishPanel.hidden=true;showTab('live');renderLive(w);clearInterval(tick);tick=setInterval(()=>renderLive(w),250)}
 function liveElapsed(){return live.elapsedStored+(live.paused?0:(Date.now()-live.start)/1000)}function segmentElapsed(){return live.segmentStored+(live.paused?0:(Date.now()-live.segmentStart)/1000)}function renderLive(w){if(!live)return;const s=w.segments[live.segmentIndex];liveWorkoutName.textContent=w.title;liveTimer.textContent=fmtTime(liveElapsed());if(!s){openFinishPanel();return}const dur=segDuration(s);liveSegmentTitle.textContent=s.label;liveSpeed.textContent=`${s.speed} קמ״ש`;segmentCountdown.textContent=dur?fmtTime(Math.max(0,dur-segmentElapsed())):'—';liveSegmentMeta.textContent=s.distanceKm?`${s.distanceKm} ק״מ · זמן צפוי ${fmtTime(dur)}`:`משך מתוכנן ${fmtTime(dur)}`;deviationLog.innerHTML=live.deviations.map(d=>`⚠️ ${d.at} — ${d.type}`).join('<br>');if(dur&&!live.paused&&segmentElapsed()>=dur)nextSegment()}
 function nextSegment(){if(!live)return;live.segmentIndex++;live.segmentStart=Date.now();live.segmentStored=0;deviationPanel.hidden=true}function togglePause(){if(!live)return;if(!live.paused){live.elapsedStored=liveElapsed();live.segmentStored=segmentElapsed();live.paused=true;pauseBtn.textContent='▶ המשך'}else{live.paused=false;live.start=Date.now();live.segmentStart=Date.now();pauseBtn.textContent='⏸ השהה'}}
@@ -71,6 +132,42 @@ function openFinishPanel(){if(!live)return;if(!live.paused)togglePause();finishP
 manualForm.onsubmit=async e=>{e.preventDefault();let imageData=null,file=mImage.files[0];if(file)imageData=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(file)});const w={id:'manual-'+Date.now(),date:mDate.value||new Date().toISOString().slice(0,10),type:mType.value,distanceKm:+mDistance.value||null,timeSec:parseTime(mTime.value),rpe:+mRpe.value||null,avgHr:+mAvgHr.value||null,maxHr:+mMaxHr.value||null,weightKg:+mWeight.value||null,limiter:mLimiter.value,notes:mNotes.value,imageData};db.workouts.push(w);if(w.weightKg)db.profile.currentWeightKg=w.weightKg;save();e.target.reset();mRpe.value=5;mRpeVal.textContent='5';alert('האימון נשמר.')};
 function encodePlan(plan){return btoa(unescape(encodeURIComponent(JSON.stringify({v:3,plan}))))}function decodePlan(code){return JSON.parse(decodeURIComponent(escape(atob(code.trim()))))}function exportPlanCode(){planImport.value=encodePlan(db.plan);navigator.clipboard?.writeText(planImport.value);alert('קוד התוכנית הועתק.')}function importCoachPlan(){try{const obj=decodePlan(planImport.value);if(!Array.isArray(obj.plan))throw new Error();const replace=confirm('אישור = החלפת התוכנית הנוכחית. ביטול = מיזוג.');if(replace)db.plan=obj.plan;else{const m=new Map(db.plan.map(x=>[x.id,x]));obj.plan.forEach(x=>m.set(x.id,x));db.plan=[...m.values()]}save();planImport.value='';alert('התוכנית עודכנה.')}catch(e){alert('קוד העדכון לא תקין.')}}
 function generateCoachReport(){const now=new Date(),cut=new Date(now-8*86400000),recent=db.workouts.filter(w=>dateObj(w.date)>=cut).sort((a,b)=>a.date.localeCompare(b.date)),p=pb();let out=`דוח אימונים שבועי – 3K Coach\n\nיעד: 3 ק"מ בפחות מ-16:00 עד ${db.profile.targetDate}\nשיא נוכחי: ${p?fmtTime(p.timeSec):'—'}\nמשקל: ${db.profile.currentWeightKg||'—'} ק"ג\n\nאימוני השבוע:\n`;recent.forEach((w,i)=>{out+=`\n${i+1}. ${w.date} | ${w.type}${w.plannedWorkout?' | '+w.plannedWorkout:''}${w.distanceKm?' | '+w.distanceKm+' ק"מ':''}${w.timeSec?' | '+fmtTime(w.timeSec):''}${w.rpe?' | RPE '+w.rpe:''}${w.avgHr||w.maxHr?' | HR '+(w.avgHr||'—')+'/'+(w.maxHr||'—'):''}${w.limiter?' | מגבלה: '+w.limiter:''}${w.deviations?.length?'\n   חריגות: '+w.deviations.map(d=>`${d.at} ${d.type}`).join('; '):''}${w.notes?'\n   הערה: '+w.notes:''}${w.imageData?'\n   קיים צילום גרף דופק — העלה אותו בנפרד לצ׳אט לניתוח חזותי.':''}\n`});out+=`\nבקשה: נתח את השבוע והצע את האימונים הבאים. החזר גם קוד עדכון ל-3K Coach V3.`;coachReport.value=out;return out}
+
+function weeklyReportWorkouts(){
+ const now=new Date(),cut=new Date(now-8*86400000);
+ return db.workouts.filter(w=>dateObj(w.date)>=cut).sort((a,b)=>a.date.localeCompare(b.date));
+}
+function coachPackage(){
+ const text=generateCoachReport(),recent=weeklyReportWorkouts();
+ return {
+  format:"3K-Coach-Weekly-Report",version:1,createdAt:new Date().toISOString(),reportText:text,
+  profile:{goalDistanceKm:db.profile.goalDistanceKm,goalTimeSec:db.profile.goalTimeSec,targetDate:db.profile.targetDate,currentWeightKg:db.profile.currentWeightKg},
+  workouts:recent.map(w=>({id:w.id,date:w.date,type:w.type,plannedWorkout:w.plannedWorkout||null,distanceKm:w.distanceKm||null,timeSec:w.timeSec||null,rpe:w.rpe||null,avgHr:w.avgHr||null,maxHr:w.maxHr||null,limiter:w.limiter||null,notes:w.notes||null,deviations:w.deviations||[],heartRateGraphImage:w.imageData||null}))
+ };
+}
+function downloadCoachPackage(){
+ download(`3k-coach-weekly-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(coachPackage(),null,2),'application/json');
+}
+function dataUrlToFile(dataUrl,name){
+ const parts=dataUrl.split(','),mime=(parts[0].match(/:(.*?);/)||[])[1]||'image/png',bin=atob(parts[1]),arr=new Uint8Array(bin.length);
+ for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+ return new File([arr],name,{type:mime});
+}
+async function shareCoachReport(){
+ const text=generateCoachReport(),recent=weeklyReportWorkouts();
+ const files=[new File([text],`3k-report-${new Date().toISOString().slice(0,10)}.txt`,{type:'text/plain'})];
+ recent.forEach((w,i)=>{if(w.imageData){try{files.push(dataUrlToFile(w.imageData,`heart-rate-${w.date}-${i+1}.png`))}catch(e){}}});
+ try{
+  if(navigator.share && (!navigator.canShare || navigator.canShare({files}))){
+   await navigator.share({title:'3K Coach – דוח שבועי',text:'דוח האימונים השבועי כולל גרפי דופק מצורפים.',files});
+  }else{
+   downloadCoachPackage();alert('שיתוף קבצים אינו נתמך כאן. הורדתי חבילת דוח אחת שאפשר להעלות לצ׳אט.');
+  }
+ }catch(e){
+  if(e && e.name!=='AbortError'){downloadCoachPackage();alert('השיתוף לא הצליח. הורדתי במקום זאת חבילת דוח אחת.');}
+ }
+}
+
 function download(name,content,type='text/plain'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click()}function copyCoachReport(){navigator.clipboard?.writeText(generateCoachReport());alert('הדוח הועתק.')}function downloadCoachReport(){download(`3k-report-${new Date().toISOString().slice(0,10)}.txt`,generateCoachReport())}function exportBackup(){download(`3k-backup-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(db,null,2),'application/json')}
 importFile.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const incoming=JSON.parse(await f.text());const merge=confirm('אישור = מיזוג, ביטול = החלפה מלאה.');if(merge){const ids=new Set(db.workouts.map(x=>x.id));(incoming.workouts||[]).forEach(x=>{if(!ids.has(x.id))db.workouts.push(x)});db.profile={...db.profile,...(incoming.profile||{})};const pm=new Map(db.plan.map(x=>[x.id,x]));(incoming.plan||[]).forEach(x=>pm.set(x.id,x));db.plan=[...pm.values()]}else db=incoming;save();alert('הייבוא הושלם.')}catch(e){alert('קובץ לא תקין.')}};const csvEsc=v=>`"${String(v??'').replaceAll('"','""')}"`;function exportCSV(){const cols=['date','type','plannedWorkout','distanceKm','timeSec','timeFormatted','rpe','avgHr','maxHr','weightKg','limiter','notes'],rows=[cols.join(',')].concat(db.workouts.sort((a,b)=>a.date.localeCompare(b.date)).map(w=>cols.map(c=>csvEsc(c==='timeFormatted'?fmtTime(w.timeSec):w[c])).join(',')));download(`3k-workouts-${new Date().toISOString().slice(0,10)}.csv`,'\ufeff'+rows.join('\n'),'text/csv;charset=utf-8')}function resetApp(){if(confirm('לאפס את כל הנתונים?')){db=clone(seed);save()}}function renderAll(){renderHome();renderPlan();renderHistory();renderSpeed();drawProgress()}renderAll();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script></body></html>
