@@ -30,10 +30,17 @@
 - נוסף כפתור "בדוק צליל מעבר".
 - הדיווח השבועי יכול להיווצר כתמונת PNG אחת הכוללת את הסיכום ואת גרפי הדופק.
 
-## V4.1
+## V4.2
 - שמע ניתן לבחירה: כבוי / ביפ / הכרזה קולית / שניהם. ברירת מחדל: כבוי.
 - בדיקות שמע נפרדות לביפ ולהכרזה כדי לבדוק התנהגות מול מוזיקה ב-iOS.
 - הכרזה קולית דינמית: "מתחילים" + מהירות, מהירות חדשה במעבר, ו"סיום אימון".
 - דוח מלא למאמן כ-ZIP: report.txt, data.json וכל גרפי הדופק כקבצי תמונה נפרדים.
 - תמונת הדיווח הקיימת נשארה כאפשרות מהירה.
 - כל התנהגות V3.4 של אימון בדיעבד/בוצע/מחיקה נשמרה.
+
+## V4.2 additions
+- Planned workout distance is calculated automatically from all workout segments; manual override is available for deviations.
+- HR is no longer requested at planned-workout completion. Coach plan codes may include `completedUpdates` entries keyed by `workoutId` or `planId` with `avgHr`, `maxHr`, and `coachComment`.
+- HR screenshots are kept compact in weekly history and open in a large overlay via View graph.
+- Treadmill segments support integer `incline` values 0–15. Incline is shown in the plan/live screen and included in speech cues.
+- Gate 0 GPS diagnostic records high-accuracy geolocation updates, accuracy, gaps, visibility changes and calculated distance, and exports JSON for analysis. Outdoor workout mode itself is not implemented yet.
