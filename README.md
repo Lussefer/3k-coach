@@ -43,4 +43,12 @@
 - HR is no longer requested at planned-workout completion. Coach plan codes may include `completedUpdates` entries keyed by `workoutId` or `planId` with `avgHr`, `maxHr`, and `coachComment`.
 - HR screenshots are kept compact in weekly history and open in a large overlay via View graph.
 - Treadmill segments support integer `incline` values 0–15. Incline is shown in the plan/live screen and included in speech cues.
-- Gate 0 GPS diagnostic records high-accuracy geolocation updates, accuracy, gaps, visibility changes and calculated distance, and exports JSON for analysis. Outdoor workout mode itself is not implemented yet.
+- Gate 0 diagnostic has been retired after confirming that foreground GPS is reliable but locked/background PWA GPS is not. V4.4 now includes a foreground-only Outdoor Mode Beta with Wake Lock.
+
+## V4.4
+- Fixed/reinforced automatic speech announcements on iPhone by resuming SpeechSynthesis before cues and retrying a stalled utterance.
+- Added a silent live audio-mode cycling button; changing mode does not itself play audio.
+- Consistent live segment numbering and distance display, plus overall workout progress bar.
+- Added Outdoor Mode Beta: Free Run and structured planned workouts using foreground GPS, smoothed live pace, target pace, automatic distance/time segment transitions, GPS accuracy/status, and workout saving.
+- Added best-effort Screen Wake Lock for live workouts. Outdoor GPS remains foreground-only in the PWA; the screen must stay on.
+- Added app-level workout touch lock with circular unlock gesture to reduce accidental taps.
