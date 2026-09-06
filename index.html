@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="he" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b1020">
-<title>3K Coach V4.6</title><link rel="manifest" href="manifest.webmanifest">
+<title>3K Coach V4.7</title><link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
 
@@ -81,7 +81,8 @@ body.workout-mode #live .card {
 <div class="card"><h2 data-i18n="workoutAudio">שמע בזמן אימון</h2><p class="muted" data-i18n="audioHelp">בחר איך האפליקציה תתריע על מעבר בין מקטעים. ברירת המחדל היא כבוי כדי לא להפריע למוזיקה.</p><label data-i18n="audioMode">מצב שמע</label><select id="audioMode" onchange="saveAudioMode()"><option value="off" data-i18n="audioOff">כבוי</option><option value="beep" data-i18n="audioBeep">ביפ</option><option value="speech" data-i18n="audioSpeech">הכרזה קולית</option><option value="both" data-i18n="audioBoth">ביפ + הכרזה</option></select><div class="row" style="margin-top:10px"><button onclick="testBeep()" data-i18n="testBeep">🔔 בדוק ביפ</button><button onclick="testSpeech()" data-i18n="testSpeech">🗣️ בדוק הכרזה</button></div><div class="small muted" style="margin-top:8px" data-i18n="audioTestHelp">מומלץ להפעיל מוזיקה בזמן הבדיקה. אם אחת השיטות עוצרת אותה, אל תבחר בה לאימון.</div></div>
 <div class="card"><h2 data-i18n="coachReport">דיווח למאמן</h2><p class="muted" data-i18n="coachReportHelp">יוצר תמונת דיווח אחת הכוללת את סיכום השבוע ואת גרפי הדופק ששמרת באימונים.</p><div class="row"><button class="primary" onclick="downloadCoachZip()" data-i18n="fullCoachReport">📦 דוח מלא למאמן</button><button onclick="downloadCoachReportImage()" data-i18n="reportImage">🖼 תמונת דיווח</button><button onclick="shareCoachZip()" data-i18n="shareFullReport">📤 שתף דוח מלא</button><button onclick="shareCoachReportImage()" data-i18n="shareImage">שתף תמונה</button></div><div class="row" style="margin-top:8px"><button onclick="generateCoachReport()" data-i18n="textOnly">צור טקסט בלבד</button><button onclick="copyCoachReport()" data-i18n="copyText">העתק טקסט</button></div><textarea id="coachReport" style="margin-top:10px;min-height:220px"></textarea><div class="small muted" style="margin-top:8px" data-i18n="recommendedChatReport">הדרך המומלצת לצ׳אט: “דוח מלא למאמן” יוצר ZIP עם report.txt וכל גרפי הדופק באיכות המקורית.</div></div>
 <div class="card"><h2 data-i18n="backupExport">גיבוי וייצוא</h2><div class="row"><button onclick="exportBackup()" data-i18n="backup">💾 גיבוי</button><button onclick="importFile.click()" data-i18n="restoreMerge">📥 שחזור / מיזוג</button><input type="file" id="importFile" accept=".zip,.json,application/zip,application/json" hidden></div><div class="row" style="margin-top:10px"><button onclick="exportCSV()">📊 CSV</button><button class="danger" onclick="resetApp()" data-i18n="reset">איפוס</button></div></div></section>
-<section id="routes" class="tab"><div class="card"><div class="row"><button class="ghost" onclick="showTab('home')" id="routesBackBtn">← חזרה</button><h2 id="routesTitle" style="margin:0">מסלולי חוץ</h2></div><p class="muted" id="routesHelp">טען קובץ GPX שתכננו מראש. המסלול נשמר במכשיר ואפשר לבחור אותו לאימון חוץ.</p><div class="row"><button class="primary" onclick="routeFileV45.click()" id="routeLoadBtn">📥 טען GPX</button><input id="routeFileV45" type="file" accept=".gpx,application/gpx+xml,text/xml,application/xml" hidden></div><div id="routeListV45" style="margin-top:12px"></div></div><div class="card" id="routePreviewCardV45" hidden><h3 id="routePreviewTitleV45">תצוגה מקדימה</h3><canvas id="routePreviewCanvasV46" width="900" height="520" style="width:100%;height:auto;background:#eef2f7;border:1px solid #31415d;border-radius:14px"></canvas><svg id="routePreviewV45" viewBox="0 0 600 320" style="display:none;width:100%;height:auto;background:#0b1220;border:1px solid #31415d;border-radius:14px"></svg><div class="small muted" id="routeMapStatusV46" style="margin-top:8px"></div><div class="row" style="margin-top:10px"><button class="good" id="routeApproveOfflineV46" onclick="approveRouteOfflineV46()" hidden>✓ אשר ושמור מפה אופליין</button><button id="routeRefreshMapV46" onclick="refreshRouteMapV46()" hidden>↻ רענן מפה</button></div><div class="small muted" id="routePreviewMetaV45" style="margin-top:8px"></div></div></section>
+<section id="routes" class="tab"><div class="card"><div class="row"><button class="ghost" onclick="showTab('home')" id="routesBackBtn">← חזרה</button><h2 id="routesTitle" style="margin:0">מסלולי חוץ</h2></div><p class="muted" id="routesHelp">טען קובץ GPX שתכננו מראש. המסלול נשמר במכשיר ואפשר לבחור אותו לאימון חוץ.</p><div class="row"><button class="primary" onclick="document.getElementById('routeFileV45').click()" id="routeLoadBtn">📥 טען GPX</button><button onclick="openRouteRecorderV47()" id="routeRecordBtn">⏺ הקלט מסלול</button><input id="routeFileV45" type="file" hidden></div><div id="routeListV45" style="margin-top:12px"></div></div><div class="card" id="routePreviewCardV45" hidden><h3 id="routePreviewTitleV45">תצוגה מקדימה</h3><canvas id="routePreviewCanvasV46" width="900" height="520" style="width:100%;height:auto;background:#eef2f7;border:1px solid #31415d;border-radius:14px"></canvas><svg id="routePreviewV45" viewBox="0 0 600 320" style="display:none;width:100%;height:auto;background:#0b1220;border:1px solid #31415d;border-radius:14px"></svg><div class="small muted" id="routeMapStatusV46" style="margin-top:8px"></div><div class="row" style="margin-top:10px"><button class="good" id="routeApproveOfflineV46" onclick="approveRouteOfflineV46()" hidden>✓ אשר ושמור מפה אופליין</button><button id="routeRefreshMapV46" onclick="refreshRouteMapV46()" hidden>↻ רענן מפה</button></div><div class="small muted" id="routePreviewMetaV45" style="margin-top:8px"></div></div></section>
+<section id="routeRecord" class="tab"><div class="card"><div class="row"><button class="ghost" onclick="closeRouteRecorderV47()" id="routeRecordBackBtn">← חזרה</button><h2 id="routeRecordTitle" style="margin:0">הקלטת מסלול</h2></div><p class="muted" id="routeRecordHelp">עמוד בנקודת ההתחלה, הפעל הקלטה וצא לאורך המסלול. המסך צריך להישאר דלוק כדי שה-PWA תמשיך לקבל GPS.</p><div class="outdoor-grid"><div class="outdoor-metric"><span id="routeRecordTimeLabel">זמן</span><b id="routeRecordTime">0:00</b></div><div class="outdoor-metric"><span id="routeRecordDistanceLabel">מרחק</span><b id="routeRecordDistance">0.00</b><span id="routeRecordKmUnit">ק״מ</span></div><div class="outdoor-metric"><span id="routeRecordPointsLabel">נקודות</span><b id="routeRecordPoints">0</b></div><div class="outdoor-metric"><span id="routeRecordAltitudeLabel">גובה</span><b id="routeRecordAltitude">—</b><span id="routeRecordAltitudeUnit">מ׳</span></div></div><div class="gps-status" id="routeRecordGps">GPS: ממתין…</div><div class="small muted" id="routeRecordElevationInfo" style="margin-top:6px"></div><div class="row" style="margin-top:14px"><button class="good" onclick="startRouteRecordingV47()" id="routeRecordStartBtn">▶ התחל הקלטה</button><button class="danger" onclick="finishRouteRecordingV47()" id="routeRecordFinishBtn" disabled>■ סיים ושמור GPX</button></div><div class="row" style="margin-top:10px"><button onclick="cancelRouteRecordingV47()" id="routeRecordCancelBtn" disabled>בטל הקלטה</button></div></div></section>
 <section id="live" class="tab"><div class="card live"><div class="live-top-tools"><button id="liveAudioBtn" onclick="cycleLiveAudio(event)" aria-label="Audio">🔇</button><button id="liveStatusBtn" onclick="speakLiveStatusV45(event)" aria-label="Status">ⓘ</button><button onclick="lockWorkoutScreen()" aria-label="Lock">🔒</button></div><div class="muted" id="liveWorkoutName"></div><div class="small muted" data-i18n="workoutTime">זמן אימון</div><div class="big" id="liveTimer">00:00</div><hr style="border-color:#263650;border-width:1px 0 0"><h2 id="liveSegmentTitle"></h2><div class="speed" id="liveSpeed"></div><div class="small muted" data-i18n="segmentRemaining">נותר במקטע</div><div class="countdown" id="segmentCountdown">--:--</div><div class="muted" id="liveSegmentMeta"></div><div class="workout-progress"><div class="workout-progress-head"><span id="liveProgressText">0%</span><span id="liveSegmentSeq"></span></div><div class="workout-progress-track"><div class="workout-progress-fill" id="liveProgressFill"></div></div></div><div class="live-actions"><button class="warn" onclick="toggleDeviationPanel()" data-i18n="deviation">⚠️ חריגה</button><button onclick="nextSegment()" data-i18n="nextSegment">⏭ מקטע הבא</button><button onclick="togglePause()" id="pauseBtn" data-i18n="pause">⏸ השהה</button><button class="danger" onclick="openFinishPanel()" data-i18n="finish">■ סיים</button></div>
 <div id="deviationPanel" class="quick-panel" hidden><b data-i18n="whatHappened">מה קרה?</b><div class="quick-grid" style="margin-top:9px"><button onclick="quickDeviation('קשה מדי')" data-i18n="tooHard">😮‍💨 קשה מדי</button><button onclick="quickDeviation('כאב')" data-i18n="painButton">🩹 כאב</button><button onclick="quickDeviation('הורדתי מהירות')" data-i18n="slowedDown">⬇️ הורדתי מהירות</button><button onclick="quickDeviation('הארכתי מנוחה')" data-i18n="extendedRest">⏱ הארכתי מנוחה</button><button onclick="quickDeviation('דילגתי על מקטע')" data-i18n="skippedSegment">⏭ דילגתי</button><button onclick="quickDeviation('עצרתי מוקדם')" data-i18n="stoppedEarly">🛑 עצרתי מוקדם</button></div></div>
 <div id="finishPanel" class="finish-panel" hidden><h3 data-i18n="finishWorkout">סיום אימון</h3><div><label id="finishDistanceLabel">מרחק האימון (ק״מ)</label><input type="number" step=".01" id="finishDistance" readonly><div class="small muted" id="finishDistanceHelp">חושב אוטומטית מתוכנית האימון. שנה רק אם בפועל הייתה חריגה.</div><label class="small" style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="finishDistanceOverride" onchange="toggleDistanceOverride()" style="width:auto"> <span id="finishDistanceOverrideText">המרחק בפועל היה שונה</span></label></div><div class="slider-head"><span>RPE</span><span class="slider-val" id="finishRpeVal">7</span></div><input type="range" min="1" max="10" step=".5" value="7" id="finishRpe"><label data-i18n="mainLimiter">מה הגביל בעיקר?</label><select id="finishLimiter"><option value="" data-i18n="dontKnow">לא יודע</option><option value="נשימה" data-i18n="breathing">נשימה</option><option value="רגליים" data-i18n="legs">רגליים</option><option value="תשישות כללית" data-i18n="generalFatigue">תשישות כללית</option><option value="כאב" data-i18n="pain">כאב</option><option value="לא הרגשתי מוגבל" data-i18n="notLimited">לא הרגשתי מוגבל</option></select><label data-i18n="optionalNote">הערה (אופציונלי)</label><textarea id="finishNotes"></textarea><div class="row"><button class="good" onclick="confirmFinish()" data-i18n="saveFinish">שמור וסיים</button><button onclick="closeFinishPanel()" data-i18n="backToWorkout">חזור לאימון</button></div></div>
@@ -750,4 +751,142 @@ const _renderRouteLiveV46=renderRouteLiveV45;renderRouteLiveV45=function(){const
 const _applyLanguageV46=applyLanguage;applyLanguage=function(){_applyLanguageV46();const set=(id,he,en)=>{const e=document.getElementById(id);if(e)e.textContent=getLanguage()==='en'?en:he};set('routesHelp','טען GPX. בזמן האישור נדרש אינטרנט להצגת נתוני OpenStreetMap; לאחר האישור שכבת המפה והמסלול נשמרים אופליין לאימון.','Load a GPX. Internet is required while approving the OpenStreetMap preview; after approval the map layer and route are saved offline for the workout.');set('routeApproveOfflineV46','✓ אשר ושמור מפה אופליין','✓ Approve & save offline map');set('routeRefreshMapV46','↻ רענן מפה','↻ Refresh map')}
 renderRoutesV45();applyLanguage();
 
+
+
+/* ===== 3K Coach V4.7: iPhone GPX import + Record Route ===== */
+const ROUTE_RECORD_MIN_ACCURACY_V47=40;
+let routeRecorderV47=null,routeRecordWatchV47=null,routeRecordTickV47=null;
+
+function openRouteRecorderV47(){
+  showTab('routeRecord');
+  resetRouteRecorderUiV47();
+}
+function closeRouteRecorderV47(){
+  if(routeRecorderV47?.running){
+    if(!confirm(t('הקלטה פעילה. לבטל אותה ולצאת?','A route recording is active. Cancel it and leave?')))return;
+    stopRouteRecorderInfrastructureV47();
+  }
+  routeRecorderV47=null;
+  showTab('routes');
+}
+function resetRouteRecorderUiV47(){
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+  set('routeRecordTime','0:00');set('routeRecordDistance','0.00');set('routeRecordPoints','0');set('routeRecordAltitude','—');
+  set('routeRecordGps',t('GPS: ממתין…','GPS: waiting…'));set('routeRecordElevationInfo','');
+  const a=document.getElementById('routeRecordStartBtn'),b=document.getElementById('routeRecordFinishBtn'),c=document.getElementById('routeRecordCancelBtn');
+  if(a)a.disabled=false;if(b)b.disabled=true;if(c)c.disabled=true;
+}
+function routeRecordElapsedV47(){return routeRecorderV47?Math.max(0,(Date.now()-routeRecorderV47.startedAt-(routeRecorderV47.pausedMs||0))/1000):0}
+function rrV47(id){return document.getElementById(id)}
+function renderRouteRecorderV47(){
+  if(!routeRecorderV47)return;
+  const pts=routeRecorderV47.points||[],last=pts[pts.length-1];
+  rrV47('routeRecordTime').textContent=fmtTime(routeRecordElapsedV47());
+  rrV47('routeRecordDistance').textContent=((routeRecorderV47.distanceM||0)/1000).toFixed(2);
+  rrV47('routeRecordPoints').textContent=String(pts.length);
+  rrV47('routeRecordAltitude').textContent=last&&Number.isFinite(last.ele)?String(Math.round(last.ele)):'—';
+  if(routeRecorderV47.lastAccuracy!=null){
+    const a=Math.round(routeRecorderV47.lastAccuracy),good=a<=15,warn=a<=ROUTE_RECORD_MIN_ACCURACY_V47;
+    rrV47('routeRecordGps').textContent=t(`GPS: ±${a} מ׳`,`GPS: ±${a} m`);
+    rrV47('routeRecordGps').className='gps-status '+(good?'gps-good':warn?'gps-warn':'gps-bad');
+  }
+  const elevCount=pts.filter(p=>Number.isFinite(p.ele)).length;
+  rrV47('routeRecordElevationInfo').textContent=elevCount?t(`גובה נשמר ב-${elevCount} נקודות GPS. נתוני שיפוע יהיו משוערים ותלויים בדיוק הגובה של המכשיר.`,`Elevation captured on ${elevCount} GPS points. Grade data will be approximate and depends on device altitude accuracy.`):t('אם iOS יספק נתוני גובה, הם יישמרו אוטומטית בתוך ה-GPX.','If iOS supplies altitude data, it will be stored automatically in the GPX.');
+}
+async function startRouteRecordingV47(){
+  if(routeRecorderV47?.running)return;
+  if(!navigator.geolocation){alert(t('GPS אינו זמין בדפדפן הזה.','GPS is not available in this browser.'));return}
+  routeRecorderV47={running:true,startedAt:Date.now(),points:[],distanceM:0,lastAccuracy:null};
+  rrV47('routeRecordStartBtn').disabled=true;rrV47('routeRecordFinishBtn').disabled=false;rrV47('routeRecordCancelBtn').disabled=false;
+  rrV47('routeRecordGps').textContent=t('GPS: מחפש מיקום מדויק…','GPS: acquiring accurate position…');
+  requestWorkoutWakeLock();
+  routeRecordWatchV47=navigator.geolocation.watchPosition(pos=>{
+    if(!routeRecorderV47?.running)return;
+    const c=pos.coords,acc=Number(c.accuracy);
+    routeRecorderV47.lastAccuracy=Number.isFinite(acc)?acc:null;
+    if(Number.isFinite(acc)&&acc>ROUTE_RECORD_MIN_ACCURACY_V47){renderRouteRecorderV47();return}
+    const p={lat:+c.latitude,lon:+c.longitude,time:new Date(pos.timestamp||Date.now()).toISOString()};
+    if(Number.isFinite(c.altitude))p.ele=+c.altitude;
+    if(Number.isFinite(c.altitudeAccuracy))p.altitudeAccuracy=+c.altitudeAccuracy;
+    if(Number.isFinite(acc))p.accuracy=acc;
+    const arr=routeRecorderV47.points,last=arr[arr.length-1];
+    if(last){
+      const step=haversineM(last,p);
+      // Reject obvious GPS jumps; keep stationary/slow points only every ~5 s.
+      const dt=Math.max(0,(Date.parse(p.time)-Date.parse(last.time))/1000);
+      if(step>150)return;
+      if(step<1.2&&dt<5){renderRouteRecorderV47();return}
+      routeRecorderV47.distanceM+=step;
+    }
+    arr.push(p);renderRouteRecorderV47();
+  },err=>{
+    console.error(err);if(routeRecorderV47){rrV47('routeRecordGps').textContent=t('GPS: שגיאה — בדוק הרשאת מיקום.','GPS error — check location permission.');rrV47('routeRecordGps').className='gps-status gps-bad'}
+  },{enableHighAccuracy:true,maximumAge:0,timeout:15000});
+  clearInterval(routeRecordTickV47);routeRecordTickV47=setInterval(renderRouteRecorderV47,500);
+}
+async function stopRouteRecorderInfrastructureV47(){
+  if(routeRecordWatchV47!=null){try{navigator.geolocation.clearWatch(routeRecordWatchV47)}catch(e){}routeRecordWatchV47=null}
+  clearInterval(routeRecordTickV47);routeRecordTickV47=null;
+  if(routeRecorderV47)routeRecorderV47.running=false;
+  await releaseWorkoutWakeLock();
+}
+function cancelRouteRecordingV47(){
+  if(!routeRecorderV47)return;
+  if(!confirm(t('לבטל את ההקלטה? המסלול הנוכחי לא יישמר.','Cancel this recording? The current route will not be saved.')))return;
+  stopRouteRecorderInfrastructureV47();routeRecorderV47=null;resetRouteRecorderUiV47();
+}
+function escXmlV47(s){return String(s??'').replace(/[<>&\"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','\"':'&quot;',"'":'&apos;'}[c]))}
+function routeToGpxV47(route){
+  const pts=route.points||[],name=route.name||'Recorded route';
+  const body=pts.map(p=>`    <trkpt lat="${Number(p.lat).toFixed(8)}" lon="${Number(p.lon).toFixed(8)}">${Number.isFinite(+p.ele)?`\n      <ele>${Number(p.ele).toFixed(2)}</ele>`:''}${p.time?`\n      <time>${escXmlV47(p.time)}</time>`:''}\n    </trkpt>`).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="3K Coach V4.7" xmlns="http://www.topografix.com/GPX/1/1">\n  <metadata><name>${escXmlV47(name)}</name></metadata>\n  <trk><name>${escXmlV47(name)}</name><trkseg>\n${body}\n  </trkseg></trk>\n</gpx>`;
+}
+function safeRouteFileNameV47(name){return String(name||'3K-Coach-Route').trim().replace(/[\\/:*?\"<>|]+/g,'-').replace(/\s+/g,'_')+'.gpx'}
+function exportRouteGpxV47(route){
+  const blob=new Blob([routeToGpxV47(route)],{type:'application/gpx+xml;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=safeRouteFileNameV47(route.name);document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+async function finishRouteRecordingV47(){
+  if(!routeRecorderV47)return;
+  await stopRouteRecorderInfrastructureV47();
+  const pts=routeRecorderV47.points||[];
+  if(pts.length<2){alert(t('לא נאספו מספיק נקודות GPS כדי לשמור מסלול.','Not enough GPS points were collected to save a route.'));routeRecorderV47=null;resetRouteRecorderUiV47();return}
+  const defaultName=t(`מסלול מוקלט ${new Date().toLocaleDateString('he-IL')}`,`Recorded route ${new Date().toLocaleDateString('en-US')}`);
+  const name=(prompt(t('שם למסלול:','Route name:'),defaultName)||defaultName).trim();
+  const route={id:'route-'+Date.now(),name,points:pts,distanceM:Math.round(routeRecorderV47.distanceM||routeDistanceV45(pts)),createdAt:new Date().toISOString(),recorded:true};
+  const rs=routesV45();rs.push(route);saveRoutesV45(rs);localStorage.setItem(ACTIVE_ROUTE_K_V45,route.id);
+  exportRouteGpxV47(route);
+  routeRecorderV47=null;resetRouteRecorderUiV47();showTab('routes');renderRoutesV45();await previewRouteV45(route.id);
+}
+
+// iOS Files may expose GPX with an unexpected/unknown MIME type. V4.7 deliberately
+// does not restrict the file picker by accept/MIME; selected content is validated by the GPX parser.
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&routeRecorderV47?.running)requestWorkoutWakeLock()});
+
+const routeFileV47=document.getElementById('routeFileV45');
+if(routeFileV47)routeFileV47.removeAttribute('accept');
+
+const _parseGpxV47=parseGpxV45;
+parseGpxV45=function(text,name){
+  const r=_parseGpxV47(text,name);
+  try{
+    const doc=new DOMParser().parseFromString(text,'application/xml');
+    const all=[...doc.getElementsByTagName('*')],nodes=all.filter(n=>n.localName==='trkpt'||n.localName==='rtept');
+    if(nodes.length===r.points.length)r.points=r.points.map((p,i)=>{
+      const n=nodes[i],time=[...n.children].find(c=>c.localName==='time');
+      return {...p,time:time?.textContent?.trim()||undefined};
+    });
+  }catch(e){}
+  return r;
+}
+
+const _applyLanguageV47=applyLanguage;
+applyLanguage=function(){
+  _applyLanguageV47();
+  const set=(id,he,en)=>{const e=document.getElementById(id);if(e)e.textContent=getLanguage()==='en'?en:he};
+  set('routeRecordBtn','⏺ הקלט מסלול','⏺ Record route');set('routeRecordBackBtn','← חזרה','← Back');set('routeRecordTitle','הקלטת מסלול','Record route');
+  set('routeRecordHelp','עמוד בנקודת ההתחלה, הפעל הקלטה וצא לאורך המסלול. המסך צריך להישאר דלוק כדי שה-PWA תמשיך לקבל GPS.','Stand at the start point, begin recording, and follow the route. The screen must stay on so the PWA continues receiving GPS.');
+  set('routeRecordTimeLabel','זמן','Time');set('routeRecordDistanceLabel','מרחק','Distance');set('routeRecordPointsLabel','נקודות','Points');set('routeRecordAltitudeLabel','גובה','Altitude');set('routeRecordKmUnit','ק״מ','km');set('routeRecordAltitudeUnit','מ׳','m');
+  set('routeRecordStartBtn','▶ התחל הקלטה','▶ Start recording');set('routeRecordFinishBtn','■ סיים ושמור GPX','■ Finish & save GPX');set('routeRecordCancelBtn','בטל הקלטה','Cancel recording');
+};
 </script></body></html>

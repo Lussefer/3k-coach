@@ -52,3 +52,9 @@
 - Added Outdoor Mode Beta: Free Run and structured planned workouts using foreground GPS, smoothed live pace, target pace, automatic distance/time segment transitions, GPS accuracy/status, and workout saving.
 - Added best-effort Screen Wake Lock for live workouts. Outdoor GPS remains foreground-only in the PWA; the screen must stay on.
 - Added app-level workout touch lock with circular unlock gesture to reduce accidental taps.
+
+## V4.7
+- Added iPhone-safe GPX import: the file picker no longer filters by MIME/extension, and GPX validity is checked after selection by the in-app XML parser. This avoids iOS Files greying out otherwise valid GPX files.
+- Added Route Recording: start from a chosen point, record foreground GPS with Screen Wake Lock, finish at the endpoint, save the route directly into the route library, and export it as a standard GPX file.
+- Recorded GPX points include `<ele>` elevation and `<time>` whenever the browser/iPhone provides them. Elevation/grade is treated as approximate because browser GPS altitude may be unavailable or noisy.
+- Existing V4.6 route library, online OSM terrain overlay, offline route snapshot, workout history, backup/restore and IndexedDB image storage are left unchanged.
