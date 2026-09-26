@@ -58,3 +58,12 @@
 - Added Route Recording: start from a chosen point, record foreground GPS with Screen Wake Lock, finish at the endpoint, save the route directly into the route library, and export it as a standard GPX file.
 - Recorded GPX points include `<ele>` elevation and `<time>` whenever the browser/iPhone provides them. Elevation/grade is treated as approximate because browser GPS altitude may be unavailable or noisy.
 - Existing V4.6 route library, online OSM terrain overlay, offline route snapshot, workout history, backup/restore and IndexedDB image storage are left unchanged.
+
+## V4.8
+- Added a dedicated Push-ups area without changing the running/GPS data model.
+- Supports a separate `strengthPlan` in weekly coach codes, with target reps and rest time per set.
+- Live push-up sessions record both performed reps and strict/valid reps for each set.
+- Added automatic rest countdown between sets, RPE/notes, and push-up history.
+- Added strict max-test logging and a separate max-reps progress chart with 16-rep pass and 30-rep safety reference lines.
+- Weekly coach report/ZIP now includes push-up workout data.
+- Existing `threeKCoach_v1` storage, running history, IndexedDB HR images, backup/restore, Outdoor Mode, route snapshots, GPX import and Route Recording are preserved.
